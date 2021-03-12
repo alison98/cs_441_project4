@@ -50,7 +50,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         if(colors.size() == 0){
             return;
         }
-        colors.remove(recentPos);
+        if(recentPos >= colors.size())
+            colors.remove(colors.size() - 1);
+        else
+            colors.remove(recentPos);
         adapter.notifyItemRemoved(recentPos);
     }
 
