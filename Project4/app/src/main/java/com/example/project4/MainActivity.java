@@ -17,6 +17,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener {
 
     MyRecyclerViewAdapter adapter;
+    ArrayList<Integer[]> colors;
+    int recentPos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +26,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         setContentView(R.layout.activity_main);
 
         // data to populate the RecyclerView with
-        ArrayList<Integer[]> colors = new ArrayList<>();
-        colors.add(new Integer[]{255, 0, 0});
-        colors.add(new Integer[]{255, 255, 0});
-        colors.add(new Integer[]{0, 255, 0});
-        colors.add(new Integer[]{0, 255, 255});
-        colors.add(new Integer[]{0, 0, 255});
-        colors.add(new Integer[]{255, 0, 255});
+        colors = new ArrayList<>();
+        for(int i = 0; i < 5; i++){
+            colors.add(getRandomColor());
+        }
 
         // set up the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.recycler);
@@ -40,8 +39,39 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         recyclerView.setAdapter(adapter);
     }
 
+    public void add(View view){
+        Integer[] newColor = getRandomColor();
+        int insertIndex = colors.size();
+        colors.add(insertIndex, newColor);
+        adapter.notifyItemInserted(insertIndex);
+    }
+
+    public void remove(View view){
+        if(colors.size() == 0){
+            return;
+        }
+        colors.remove(recentPos);
+        adapter.notifyItemRemoved(recentPos);
+    }
+
+    public void randomize(View view){
+        int size = colors.size();
+        colors.clear();
+        for(int i = 0; i < size; i++){
+            colors.add(getRandomColor());
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    public Integer[] getRandomColor(){
+        int r = (int)(Math.random() * 256);
+        int g = (int)(Math.random() * 256);
+        int b = (int)(Math.random() * 256);
+        return new Integer[]{r, g, b};
+    }
+
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        recentPos = position;
     }
 }
